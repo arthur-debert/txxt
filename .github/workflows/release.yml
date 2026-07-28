@@ -54,12 +54,13 @@ jobs:
       # distributes the artifact to GH release + npm in one tag-push.
       wasm-packages: lex-wasm
       wasm-npm-scope: lex-fmt
-      # Layer 2 of the cross-repo release cascade (lex-fmt/lex#640). The
-      # reusable rust-cli.yml fires `upstream-released` to each repo here
-      # after a successful release (release@v3.8.0+). lex's downstreams are the
-      # editor extensions, which submodule lex and listen for the two-hop
-      # cascade from both lex and tree-sitter-lex. See arthur-debert/release#804.
-      notify-downstreams: lex-fmt/vscode lex-fmt/nvim lex-fmt/lexed
+      # No `notify-downstreams:` — the cross-repo release cascade is RETIRED
+      # (shipit `docs/dependencies.md`, the 2026-07-20 reset). A cross-repo
+      # dependency is a plain conda package whose version lives in exactly one
+      # place, the consumer's own `pixi.toml`; nothing bumps a consumer
+      # automatically. The declaration that used to sit here fired
+      # `upstream-released` at lex-fmt/vscode, lex-fmt/nvim and lex-fmt/lexed,
+      # which cut consumer releases that consumed no new version of anything.
     # `secrets: inherit` doesn't propagate cross-org (lex-fmt → arthur-debert),
     # so secrets must be passed explicitly. Note: lex-fmt/lex stores the
     # crates.io token under `CARGO_REGISTRY_TOKEN`; the action's input is
