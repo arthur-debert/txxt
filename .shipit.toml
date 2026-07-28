@@ -193,6 +193,7 @@ agent-start = "sha256:70a2f96788eecbd689412d428a3615193edcd1deaccc730e6976332c61
 "pixi.toml#shipit-lint-deps" = "sha256:c75669f6e5fe369c0a6a2d5bbcceb59f0c8a0c9a1eba163f00d1081048067224"
 "pixi.toml#shipit-environments" = "sha256:940c14da94788ca8581c1363752ee5ab42eb07b1d8a9bf89fdb086bb0ed0cbed"
 "pixi.toml#shipit-lexd" = "sha256:16c395dc754ca635435b8238193cde83e11cdab543c03e95c0eb9d445ebdddb1"
+"pixi.toml#shipit-launcher-deps" = "sha256:fe4ac42c0543a35b0c845404c0a21d6a64e2ecabeb2f15f4c8b9229506e62da7"
 "pixi.toml#shipit-rust-lint-toolchain" = "sha256:e5105bbd8feb8a1d5bde16dd427028303d1f0b3b4c43d7b85689de95c1200285"
 "pixi.toml#shipit-rust-release-deps" = "sha256:4599489e4f0806eb7fde4418255531f68e2fcb85aa8a07fead3ecfc68d37fcbe"
 "pixi.toml#shipit-node-deps" = "sha256:c9f9ff77b997e755780bcf35094b4ef3c77fd31c99c269e12c1eb61d1646f1a9"

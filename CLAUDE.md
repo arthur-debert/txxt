@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Lex
 
 Lex is a plain text format for structured documents — more expressive than Markdown, human-readable in raw form. Structure comes from indentation (4-space tabs), not markup.
@@ -39,16 +41,30 @@ comms/
 
 - All crates build together: `cargo build --workspace`
 - Tests: `cargo nextest run --workspace` or `cargo test --workspace`
-- Pre-commit hook: `lefthook install` (lefthook composes `lefthook.yml` from arthur-debert/release Components — md/yaml/sh lint + cargo fmt/clippy check)
+- Lint gate: `pixi run lint` (`pixi run lint --fix` to format what it can) — the same
+  multi-language gate CI runs, wired as a commit/push hook by the shipit-managed
+  `lefthook.yml`. `shipit install` activates the hooks.
 - Exclude lex-wasm from most commands: `--exclude lex-wasm`
 
 ## Releasing
 
-This repo participates in the lex release cascade. Cutting a release here is triggered automatically when comms releases (via the `on-upstream-released` handler workflow). Once cut, it cascades further: lex's `notify-downstreams` step fires `repository_dispatch upstream-released` to vscode + nvim + lexed.
+Releases are cut by hand, never automatically. There is no cascade: nothing here
+triggers on an upstream release, and cutting here triggers nothing downstream. A
+cross-repo dependency is a plain conda package whose version lives in exactly one
+place — the consuming repo's own `pixi.toml` — so a consumer picks up a new `lexd`
+or `lexd-lsp` by editing its own pin. See
+[shipit/docs/dependencies.md](https://github.com/arthur-debert/shipit/blob/main/docs/dependencies.md).
 
-For a manual cut: `gh workflow run release.yml --repo lex-fmt/lex -f version=X.Y.Z` (lex uses workflow_dispatch, not tag-push — the canonical rust-cli@v1 workflow drives the bump+commit+tag itself).
+To cut: `gh workflow run shipit-release.yml --repo lex-fmt/lex -f version=X.Y.Z`
+(workflow_dispatch, not tag-push — shipit's release blocks drive the bump, commit
+and tag). `stage` selects the full chain or one re-runnable stage
+(`prepare` | `build` | `sign` | `publish`); `endpoints` narrows which endpoints
+fire. The release surface itself — artifacts, platforms, endpoints — is declared in
+`.shipit.toml` `[artifacts]`, not in the workflow.
 
-Design + ops + gotchas: [arthur-debert/release/docs/lex-release-cascade.md](https://github.com/arthur-debert/release/blob/main/docs/lex-release-cascade.md).
+Every feature/fix PR must add a `CHANGELOG/unreleased-*.md` fragment; `prepare`
+refuses an empty release. Run `pixi run changelog render` after adding one so
+`CHANGELOG.md` stays in sync.
 
 ## Related repos
 

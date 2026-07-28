@@ -95,6 +95,23 @@ lint = ["lint", "shipit-lexd"]
 # on PATH), so the default env must carry the full `cargo nextest` stack itself.
 # Same conda-forge pin as the managed [feature.lint.dependencies] rust.
 [dependencies]
+# >>> shipit-managed launcher deps (do not edit; regenerate via `shipit install`) >>>
+# The pinned `bin/shipit` launcher's one prerequisite (#758, TOL02-WS17
+# #794): every workflow block (wf-checks and the whole wf-release family)
+# runs `pixi run --locked ./bin/shipit ...`, and the ADR-0033 launcher
+# resolves the repo's shipit pin via `uv tool run` — but hosted runners do
+# not carry uv, so without this block the very first `./bin/shipit` dies 127
+# before any verb runs. Provisioned from conda-forge under setup-pixi's
+# lockfile-keyed cache (the #582 doctrine; the spike measured the launcher's
+# uv resolve at 5s cold / 0-3s warm riding this env — no extra cache step).
+# Anchored under [dependencies] — the DEFAULT env — because that is exactly
+# the PATH a bare `pixi run --locked <task>` resolves. Pinned to the minor
+# line of Layer 0's UV_PIN (bin/setup-dev-env.sh), so dev machines and CI
+# provision the same uv; a lockstep drift test (tests/test_install.py) fails
+# when the two move apart. `uv build` (the python bundle composition) rides
+# this same entry.
+uv = "0.11.*"
+# <<< shipit-managed launcher deps <<<
 # >>> shipit-managed conda packager (do not edit; regenerate via `shipit install`) >>>
 # The conda ENDPOINT's packager (ARF01-WS01 #950, ADR-0064/0070; re-gated
 # #1071). `shipit release publish`'s conda endpoint runs `rattler-build build`
@@ -186,12 +203,12 @@ rust = "1.96.*"
 # wasm-pack composition dies at "wasm32-unknown-unknown target not found in
 # sysroot" (proven live on phos-core). Same 1.96.* line as `rust`.
 rust-std-wasm32-unknown-unknown = "1.96.*"
-# uv backs the pinned bin/shipit launcher (ADR-0033: it provisions the repo's
-# pinned shipit via uv, PATH-independent). Both wf-checks lanes run
-# `pixi run --locked <task>` -> ./bin/shipit on a hosted runner where uv is not
-# otherwise present, so the launcher's one prerequisite must ride the env too.
-# (Flagged upstream: the block/managed set should own this — lex#828/#829.)
-uv = ">=0.5"
+# NOTE: `uv` (the pinned bin/shipit launcher's one prerequisite, ADR-0033) used
+# to be pinned HERE as a consumer-owned entry, flagged at the time as something
+# the managed set should own (lex#828/#829). It now does: the managed
+# `pixi.toml#shipit-launcher-deps` block below carries it. While this local pin
+# existed, that block hit a pixi key conflict and shipit SKIPPED delivering it
+# with only a warning — so this repo was silently off the fleet pin.
 
 # >>> shipit-managed lexd feature (do not edit; regenerate via `shipit install`) >>>
 [feature.shipit-lexd]

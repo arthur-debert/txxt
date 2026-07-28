@@ -18,6 +18,16 @@
   new version of anything — a cross-repo dependency is now a plain conda package whose
   version lives only in the consumer's own `pixi.toml`. The `copilot-review` workflow
   is also removed: the PR state engine is the sole requester of reviewers (lex#851)
+- Build: adopt the fleet `uv` pin. A consumer-owned `uv = ">=0.5"` in `[dependencies]`
+  made the managed `shipit-launcher-deps` block skip delivery with only a warning, so
+  this repo was silently off the fleet pin; it now rides the managed block at `0.11.*`
+  (the resolved build is unchanged, so the lockfile does not move) (lex#851)
+- Build: drop the retired `bin/pr-loop-guard` PreToolUse hook and its
+  `.claude/settings.json` entry (shipit#1117). It denied `gh pr create` unless a
+  sentinel was armed by the `gh-pr-review-loop` skill, which this repo does not carry —
+  so it blocked the dev cycle it was meant to enforce, and the PR state engine is the
+  authority now. A sibling entry pointing at a `bin/delegate-guard` that does not exist
+  in this repo is removed with it (lex#851)
 - Packaging: `lex-wasm` declares `conda` as a selectable publish endpoint alongside
   `gh-release` and npm. The derived endpoint repackages the platform-independent
   wasm-pack archive into one `noarch: generic` `.conda` in the `noarch/` subdir of
