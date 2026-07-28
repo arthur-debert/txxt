@@ -11,8 +11,11 @@ name: Checks
 #
 # The companion wasm + docs jobs live on in test-rust.yml (untouched — its
 # `Documentation` and `WASM build` checks cover the concerns the legacy
-# rust-ci.yml `ci / wasm-*` contexts duplicated). Release workflows
-# (release.yml, on-upstream-released.yml) stay on the legacy release path.
+# rust-ci.yml `ci / wasm-*` contexts duplicated). Releases run through
+# shipit-release.yml; release.yml is the legacy rust-cli.yml caller, kept only
+# for the brew/musl/windows legs the shipit `[artifacts]` surface does not
+# cover yet. The `on-upstream-released.yml` cascade receiver is DELETED — the
+# cross-repo cascade is retired (shipit `docs/dependencies.md`).
 
 on:
   push:
